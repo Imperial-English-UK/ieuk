@@ -13,28 +13,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository # ✅ Ensures GitHub Actions pulls the latest code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Up Node.js
+      - name: Set Up Node.js # ✅ Installs Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install Dependencies
+      - name: Install Dependencies # ✅ Installs backend dependencies
         run: |
           cd backend
           npm install
 
-      - name: Run Backend Tests (Optional)
+      - name: Run Backend Tests (Optional) # ✅ Runs automated tests
         run: |
           cd backend
           npm test
 
-      - name: Build Docker Image
+      - name: Build Docker Image # ✅ Builds the backend Docker image
         run: |
           cd docker-backend
           docker-compose build
 
-      - name: Deploy Backend (Placeholder)
-        run: echo "Deploying Backend..."
+      - name: Push Docker Image (Optional) # ✅ Pushes Docker image to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          docker tag backend ieuk-admin-backend:latest
+          docker push ieuk-admin-backend:latest
+
+      - name: Deploy Backend (Optional) # ✅ Deployment step
